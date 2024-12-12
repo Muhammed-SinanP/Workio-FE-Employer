@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import brandLogo from "../../assets/logo.png";
+
+
+import Logo from "./Logo";
+import DarkModeBtn from "../buttons/DarkModeBtn";
 
 const SignHeader = () => {
   const [headShadow, setHeadShadow] = useState(false);
-  const navigate = useNavigate();
+  
 
   useEffect(() => {
     function handleScroll() {
@@ -23,21 +25,8 @@ const SignHeader = () => {
         headShadow ? "shadow-sm shadow-brandColor-dark" : "shadow-none"
       }`}
     >
-      <div className="innerDiv bg-white px-2 py-1 rounded-b-md">
-        <div
-          onClick={() => navigate("/")}
-          className=" flex  justify-center gap-0.5 cursor-pointer"
-        >
-          <img src={brandLogo} alt="brand logo" className="h-8" />
-          <div>
-            <span className="text-2xl font-bold text-brandColor-dark font-brandFont">
-              Workio
-            </span>
-            <div className="-mt-2 text-xs text-brandColor ml-4">
-              for employers
-            </div>
-          </div>
-        </div>
+      <div className="innerDiv bg-white dark:bg-darkColor  py-1 rounded-b-md flex justify-between px-2">
+        <Logo/><DarkModeBtn/>
       </div>
     </div>
   );

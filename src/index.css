@@ -1,29 +1,29 @@
 @import url("https://fonts.googleapis.com/css2?family=Lora:wght@700&display=swap");
-html {
-  background-color: #8bfcd1;
-}
+/* html {
+  background-color: #aeffe0;
+} */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 @layer components {
   .outerDiv {
-    @apply bg-green-50 w-full;
+    @apply  w-full;
   }
   .innerDiv{
     @apply max-w-[1536px] m-auto
   }
   .inputStyle {
-    @apply border-0.5 border-black rounded-sm cursor-pointer px-1 py-0.5;
+    @apply border-0.5 border-brandColor rounded-sm cursor-pointer px-1 py-0.5 dark:border-darkColor-text;
   }
   .inputStyle:focus {
-    @apply outline-none border-brandColor;
+    @apply outline-none border-brandColor dark:border-darkColor-text;
   }
   .inputStyle:hover {
-    @apply border-brandColor;
+    @apply border-brandColor dark:border-darkColor-text;
   }
 
-  .btn {
-    @apply flex items-center justify-center border-0.5 py-0.5 cursor-pointer border-black px-1 pl-0  rounded-sm;
+  .signBtn {
+    @apply flex items-center justify-center border-0.5 py-0.5 cursor-pointer border-black px-1.5 pl-0  rounded-sm transition-all duration-300 ease-in-out;
   }
   .signBtn:hover {
     @apply shadow bg-brandColor text-white border-brandColor;

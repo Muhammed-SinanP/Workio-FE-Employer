@@ -1,3 +1,5 @@
+import { light } from '@mui/material/styles/createPalette'
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -13,6 +15,17 @@ export default {
           light: "#76e3b9",
           lighter: "#7efcce",
         },
+        homeColor:{
+          DEFAULT:"#64D8FF",
+          light:"#dcf4fc",
+          darkMode:"#B1BBC9",
+          darkModeLight:"#bec7d4"
+        },
+        darkColor:{
+          DEFAULT:"#1D232A",
+          light:"#39424d",
+          text:"#A6ADBB"
+        }
       },
       fontFamily: {
         brandFont: ["Lora", "sans-serif"],
@@ -22,6 +35,12 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('daisyui'),
+  ],
+  daisyui: {
+    themes: ["light", "dark"],
+  },
+  darkMode: ['selector', '[data-theme="dark"]'],
 }
 

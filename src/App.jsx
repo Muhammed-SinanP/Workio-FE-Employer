@@ -1,14 +1,17 @@
 
 import { RouterProvider } from "react-router-dom"
 import { router } from "./routes/routes"
+import { ConfirmProvider } from "material-ui-confirm";
 
 
 function App() {
  
 
   return (
-    <>
-      <RouterProvider router={router} />
+    <><ConfirmProvider defaultOptions={{
+      confirmationButtonProps: { autoFocus: true },
+    }}>
+      <RouterProvider router={router} /></ConfirmProvider>
     </>
   )
 }

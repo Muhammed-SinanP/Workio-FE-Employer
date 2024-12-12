@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { axiosInstance } from "../config/axiosInstance";
 
-const useFetch = (url) => {
+const useFetch = (url,dependency=[]) => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState(null);
@@ -41,7 +41,7 @@ const useFetch = (url) => {
     return () => {
       isMounted = false; 
     };
-  }, [url]);
+  }, [url,...dependency]);
 
   return [data, error, isLoading];
 };

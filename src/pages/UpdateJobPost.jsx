@@ -4,6 +4,9 @@ import { useLocation } from "react-router-dom";
 import useFetch from "../hooks/useFetch";
 
 const UpdateJobPost = () => {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   
   const location = useLocation();
   const jobId = location.pathname.split("/").pop();

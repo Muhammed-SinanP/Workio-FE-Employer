@@ -11,11 +11,15 @@ import JobApplicationsPage from "../pages/JobApplicationsPage";
 import NewJobPost from "../pages/NewJobPost";
 import UpdateJobPost from "../pages/UpdateJobPost";
 import ProtectedRoutes from "./ProtectedRoutes";
+import ErrorPage from "../pages/ErrorPage";
+import ForgotPasswordPage from "../pages/ForgotPasswordPage";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <MainLayout />,
+    errorElement:<ErrorPage/>,
     children: [
 
       {
@@ -23,7 +27,15 @@ export const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        element: <ProtectedRoutes signIn={true} />, // Wrap all protected routes
+        path: "/forgotPassword",
+        element: <ForgotPasswordPage />,
+      },
+      {
+        path: "/resetPassword/:resetToken",
+        element: <ResetPasswordPage/>,
+      },
+      {
+        element: <ProtectedRoutes signIn={true} />, 
         children: [
           {
             path: "myProfile",
@@ -50,10 +62,10 @@ export const router = createBrowserRouter([
 
       {
         path: "sign",
+        element: <ProtectedRoutes signIn={false} />,
         children: [
-          {
-            element: <ProtectedRoutes signIn={false} />, // Wrap all public routes
-            children: [
+           
+      
               {
                 path: "login",
                 element: <LoginPage />,
@@ -62,8 +74,8 @@ export const router = createBrowserRouter([
                 path: "register",
                 element: <RegisterPage />,
               },
-            ],
-          },
+            
+          
         ],
       },
     ],

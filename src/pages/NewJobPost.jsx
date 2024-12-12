@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 
 import JobForm from "../components/forms/JobForm"
+import { useEffect } from "react";
 const NewJobPost = () => {
-  
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const [formData, setFormData] = useState({
     jobTitle: "",
     jobDescription: "",

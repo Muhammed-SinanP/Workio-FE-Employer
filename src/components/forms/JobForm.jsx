@@ -46,13 +46,13 @@ const JobForm = ({
   }
 
   return (
-    <div className="xl:w-2/3 lg:w-3/4 md:w-4/5 w-11/12 bg-brandColor  border border-black rounded-md">
-      <div className="text-center py-4 capitalize text-lg font-medium text-white">
+    <div className="xl:w-2/3 lg:w-3/4 md:w-4/5 w-11/12 bg-brandColor dark:bg-darkColor-text  border border-black rounded-md">
+      <div className="text-center py-4 capitalize text-lg font-medium text-white dark:text-gray-950">
         {isCreate?<div>Create new job post</div>:<div>Update job post - <span className="font-bold tracking-wider">{jobTitle}</span></div>}
       </div>
       <form
         onSubmit={handleSubmit}
-        className="bg-white flex flex-col gap-2 lg:gap-4 p-10 m-1 rounded-md relative pb-20"
+        className="bg-white dark:bg-darkColor flex flex-col gap-2 lg:gap-4 p-10 m-1 rounded-md relative pb-20"
       >
         {!isCreate && (
           <div className="w-full   flex">
@@ -68,8 +68,8 @@ const JobForm = ({
               value={formData.jobStatus}
               onChange={handleChange}
             >
-              <option value="open">Open</option>
-              <option value="closed">Closed</option>
+              <option value="Open">Open</option>
+              <option value="Closed">Closed</option>
             </select>
           </div>
         )}
@@ -190,14 +190,14 @@ const JobForm = ({
           <select
             name="jobType"
             id="jobType"
-            className="border"
+            className="inputStyle"
             required
             value={formData.jobType}
             onChange={handleChange}
           >
-            <option value="full_time">Full time</option>
-            <option value="part_time">Part time</option>
-            <option value="internship">Internship</option>
+            <option value="Full-time">Full time</option>
+            <option value="Part-time">Part time</option>
+            <option value="Internship">Internship</option>
           </select>
         </div>
         <div className="w-full   flex">
@@ -208,14 +208,14 @@ const JobForm = ({
           <select
             name="workModel"
             id="workModel"
-            className="border"
+            className="inputStyle"
             required
             value={formData.workModel}
             onChange={handleChange}
           >
-            <option value="office">Office</option>
-            <option value="remote">Remote</option>
-            <option value="hybrid">Hybrid</option>
+            <option value="Office">Office</option>
+            <option value="Remote">Remote</option>
+            <option value="Hybrid">Hybrid</option>
           </select>
         </div>
         <div className="w-full   flex">
