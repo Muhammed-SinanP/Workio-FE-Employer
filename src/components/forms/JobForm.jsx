@@ -1,6 +1,7 @@
 import React from "react";
 import { axiosInstance } from "../../config/axiosInstance";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 const JobForm = ({
   isCreate,
@@ -38,7 +39,9 @@ const JobForm = ({
         data: formData,
       });
       if (response.status === 200) {
+        isCreate?toast.success("Job posted"):toast.success("Job updated")
         navigate("/myJobPosts");
+        
       }
     } catch (err) {
       console.log("err in posting/updating job fe", err);

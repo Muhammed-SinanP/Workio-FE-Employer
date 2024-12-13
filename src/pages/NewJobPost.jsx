@@ -14,11 +14,11 @@ const NewJobPost = () => {
     locationCountry: "",
     locationState: "",
     locationCity: "",
-    jobType: "full_time",
-    workModel: "office",
+    jobType: "Full-time",
+    workModel: "Office",
     minSallary: 0,
     maxSallary: 0,
-    jobStatus:"open"
+    jobStatus:"Open"
   });
 
 

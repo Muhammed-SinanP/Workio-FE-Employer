@@ -4,6 +4,7 @@ import { axiosInstance } from "../../config/axiosInstance";
 import { useDispatch } from "react-redux";
 import { saveUserData } from "../../redux/features/userSlice";
 import googleIcon from "../../assets/googleIcon.png";
+import toast from "react-hot-toast"
 
 const  AuthForm = ({ isRegister,formData,setFormData }) => {
   const dispatch = useDispatch();
@@ -35,10 +36,19 @@ const  AuthForm = ({ isRegister,formData,setFormData }) => {
       console.log(response);
       if (response.status === 200) {
         dispatch(saveUserData());
+        toast.success("SignIn success")
         navigate("/");
       }
     } catch (err) {
-      console.error("Error during sign:", err.response?.data?.message || err);
+      if(err.status===409){
+        toast.error("User already exist.Please login")
+      }
+      else if(err.status===401){
+        toast.error("Incorrect password")
+      }
+      else{
+        console.error("Error during sign:", err.response?.data?.message || err);
+      }
     }
   }
   function googleSignIn() {

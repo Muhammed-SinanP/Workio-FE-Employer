@@ -43,7 +43,7 @@ const MainLayout = () => {
         <Header />
       )}
 
-      <div className="flex flex-col grow min-h-screen relative dark:bg-darkColor-light bg-gray-50 ">
+      <div className="flex flex-col grow min-h-screen relative dark:bg-darkColor-light bg-green-50 ">
         <Outlet />
       </div>
       {location.pathname == "/sign/login" ||

@@ -7,7 +7,7 @@ import { useConfirm } from "material-ui-confirm";
 import { axiosInstance } from "../config/axiosInstance";
 import ProfileForm from "../components/forms/ProfileForm";
 import PasswordChangeForm from "../components/forms/PasswordChangeForm";
-const MyProfile = () => {
+const MyProfilePage = () => {
   const [userProfile, error, isLoading] = useFetch("/user/myProfile");
   const confirm = useConfirm();
   const navigate = useNavigate()
@@ -73,7 +73,7 @@ const MyProfile = () => {
                 <div className="flex flex-col gap-1">
                   <div className="flex items-end gap-2">
                     <div className="bg-homeColor-light rounded-md p-0.5 px-1">
-                      <PersonIcon className="text-brandColor-dark" />
+                      <PersonIcon className="text-brandColor-dark dark:text-darkColor-text" />
                     </div>
                     <div className=" font-semibold text-lg">Personal info</div>
                   </div>
@@ -109,4 +109,4 @@ const MyProfile = () => {
   );
 };
 
-export default MyProfile;
+export default MyProfilePage;
