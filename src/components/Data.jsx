@@ -52,7 +52,7 @@ export const footerEmployerData=[
 export const footerSeekerData=[
     {
         title:"Job Seeker Center",
-        link:import.meta.env.VITE_FRONTEND_SEEKER
+        link: import.meta.env.VITE_FRONTEND_SEEKER
     },
     
     
