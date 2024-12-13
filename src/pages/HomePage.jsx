@@ -20,7 +20,7 @@ const HomePage = () => {
               <img
                 src={hiringImg}
                 alt="hiring image"
-                className="h-44 sm:h-56 lg:h-80 object-contain  -mt-1 sm:-mt-0 dark:mix-blend-luminosity"
+                className="h-44 sm:h-56 lg:h-80 object-contain  dark:mix-blend-luminosity"
               />
             </div>
             <div className="sm:w-1/3 w-full px-6 sm:px-0  flex flex-col gap-2">
