@@ -89,10 +89,10 @@ const  AuthForm = ({ isRegister,formData,setFormData }) => {
               </NavLink>
             </div>
           )}
-          <div className="w-full border-b my-4"></div>
+          <div className="w-full border-b my-4 "></div>
           <button
             onClick={googleSignIn}
-            className="flex border  border-brandColor rounded-md p-2 w-full items-center justify-around text-brandColor hover:bg-brandColor hover:text-white active:scale-95 transition-all duration-300 ease-in-out"
+            className="flex border  border-brandColor rounded-md p-2 w-full items-center justify-center gap-2 text-brandColor hover:bg-brandColor hover:text-white active:scale-95 transition-all duration-300 ease-in-out"
           >
             <img src={googleIcon} alt="google icon" className="h-4" />
             <span className="text-sm">Continue with Google</span>
