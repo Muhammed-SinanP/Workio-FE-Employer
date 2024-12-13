@@ -64,7 +64,7 @@ const ProfileForm = ({ userProfile }) => {
         </label>
         <input
           id="userName"
-          className={` dark:bg-darkColor col-span-6 inputStyle ${
+          className={` dark:bg-darkColor col-span-6 inputStyle capitalize ${
             edit === "name" ? "" : "border-none cursor-auto"
           }`}
           type="text"

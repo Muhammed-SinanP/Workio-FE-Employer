@@ -17,7 +17,7 @@ const JobForm = ({
       key === "minSallary" || key === "maxSallary" || key === "jobExperience"
         ? formData[key] !== ""
         : formData[key].trim() !== ""
-    ) && formData.maxSallary > formData.minSallary;
+    ) && parseInt(formData.maxSallary) > parseInt(formData.minSallary);
 
   function handleChange(e) {
     const { name, value } = e.target;
@@ -222,7 +222,7 @@ const JobForm = ({
           </select>
         </div>
         <div className="w-full   flex">
-          <div className="w-1/3 ">Sallary</div>
+          <div className="w-1/3 ">Sallary <span className="font-light">(LPA)</span></div>
           <div className="w-2/3  flex justify-start">
             <div className="1/2 flex">
               <label htmlFor="minSallary" className="w-2/6 text-end pr-1">
