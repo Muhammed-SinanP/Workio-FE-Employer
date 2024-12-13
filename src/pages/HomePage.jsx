@@ -28,12 +28,12 @@ const HomePage = () => {
                 WORKIO FOR EMPLOYERS
               </div>
               <div className="text-2xl md:text-4xl  font-light leading-9 text-white italic">
-                Let’s hire your next great candidate. Fast.
+                Let's hire your next great candidate. Fast.
               </div>
 
               <div className="text-xs leading-4 tracking-wide text-black ">
-                No matter the skills, experience or qualifications you’re
-                looking for, you’ll find the right people here.
+                No matter the skills, experience or qualifications you're
+                looking for, you'll find the right people here.
               </div>
               <div>
                 <button
