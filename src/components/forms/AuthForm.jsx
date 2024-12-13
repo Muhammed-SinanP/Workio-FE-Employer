@@ -26,7 +26,7 @@ const  AuthForm = ({ isRegister,formData,setFormData }) => {
   }
   async function handleSubmit(e) {
     e.preventDefault();
-    console.log(" success", formData);
+    
     try {
       const response = await axiosInstance({
         method: "POST",
@@ -40,8 +40,12 @@ const  AuthForm = ({ isRegister,formData,setFormData }) => {
         navigate("/");
       }
     } catch (err) {
+      
       if(err.status===409){
         toast.error("User already exist.Please login")
+      }
+      else if(err.status==404){
+        toast.error("No such user exists.Please register")
       }
       else if(err.status===401){
         toast.error("Incorrect password")
@@ -53,7 +57,7 @@ const  AuthForm = ({ isRegister,formData,setFormData }) => {
   }
   function googleSignIn() {
     try {
-      console.log("google clicked");
+      
 
       window.location.href = `${
         import.meta.env.VITE_BACKEND_URL
