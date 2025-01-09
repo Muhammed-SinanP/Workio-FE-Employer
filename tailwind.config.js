@@ -24,7 +24,8 @@ export default {
         darkColor:{
           DEFAULT:"#1D232A",
           light:"#39424d",
-          text:"#A6ADBB"
+          text:"#A6ADBB",
+          input:"#121212"
         }
       },
       fontFamily: {
