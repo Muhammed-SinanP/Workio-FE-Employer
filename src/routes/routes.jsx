@@ -1,19 +1,18 @@
 import { createBrowserRouter } from "react-router-dom";
 import MainLayout from "../layouts/MainLayout";
 import HomePage from "../pages/HomePage";
-import LoginPage from "../pages/LoginPage";
-import RegisterPage from "../pages/RegisterPage";
-
-import MyProfilePage from "../pages/MyProfilePage";
-import MyJobPostsPage from "../pages/MyJobPostsPage";
-import JobApplicationsPage from "../pages/JobApplicationsPage";
-
-import NewJobPost from "../pages/NewJobPost";
-import UpdateJobPost from "../pages/UpdateJobPost";
+import LoginPage from "../pages/auth/LoginPage";
+import RegisterPage from "../pages/auth/RegisterPage";
+import JobApplicationsPage from "../pages/user/JobApplicationsPage";
 import ProtectedRoutes from "./ProtectedRoutes";
 import ErrorPage from "../pages/ErrorPage";
-import ForgotPasswordPage from "../pages/ForgotPasswordPage";
-import ResetPasswordPage from "../pages/ResetPasswordPage";
+import JobPostsPage from "../pages/user/JobPostsPage";
+import NewJobPostPage from "../pages/user/NewJobPostPage";
+import UpdateJobPostPage from "../pages/user/UpdateJobPostPage";
+import ProfilePage from "../pages/user/ProfilePage";
+import ChangePasswordPage from "../pages/user/ChangePasswordPage";
+import ForgotPasswordPage from "../pages/auth/ForgotPasswordPage";
+import ResetPasswordPage from "../pages/auth/ResetPasswordPage";
 
 export const router = createBrowserRouter([
   {
@@ -28,7 +27,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "/forgotPassword",
-        element: <ForgotPasswordPage />,
+        element: <ForgotPasswordPage/>,
       },
       {
         path: "/resetPassword/:resetToken",
@@ -39,29 +38,33 @@ export const router = createBrowserRouter([
         children: [
           {
             path: "myProfile",
-            element: <MyProfilePage />,
+            element: <ProfilePage />,
+          },
+          {
+            path:"changeMyPassword",
+            element:<ChangePasswordPage/>
           },
           {
             path: "myJobPosts",
-            element: <MyJobPostsPage />,
+            element: <JobPostsPage />,
           },
           {
             path: "jobApplications/:jobId",
             element: <JobApplicationsPage />,
           },
           {
-            path: "createNewJobPost",
-            element: <NewJobPost />,
+            path: "newJobPost",
+            element: <NewJobPostPage />,
           },
           {
             path: "updateJobPost/:jobId",
-            element: <UpdateJobPost />,
+            element: <UpdateJobPostPage />,
           },
         ],
       },
 
       {
-        path: "sign",
+        path: "auth",
         element: <ProtectedRoutes signIn={false} />,
         children: [
            

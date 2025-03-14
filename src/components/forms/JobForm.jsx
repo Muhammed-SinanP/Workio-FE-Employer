@@ -1,274 +1,306 @@
-import React from "react";
-import { axiosInstance } from "../../config/axiosInstance";
+import { zodResolver } from '@hookform/resolvers/zod'
+import React, { useEffect, useState } from 'react'
+import { useForm, useFieldArray, Controller } from 'react-hook-form'
+import { jobPostSchema } from '../../schemas/postSchema'
+import ClearIcon from '@mui/icons-material/Clear';
+import { Range } from "react-range";
+import AddIcon from '@mui/icons-material/Add';
+import { Country, State, City } from 'country-state-city';
+import { axiosInstance } from '../../config/axiosInstance';
+import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom";
-import toast from "react-hot-toast";
 
-const JobForm = ({
-  isCreate,
-  formData,
-  setFormData,
-  handleSubmit,
-  jobTitle,
-  jobId,
-}) => {
-  const navigate = useNavigate();
-  const isFormValid =
-    Object.keys(formData).every((key) =>
-      key === "minSallary" || key === "maxSallary" || key === "jobExperience"
-        ? formData[key] !== ""
-        : formData[key].trim() !== ""
-    ) && parseInt(formData.maxSallary) > parseInt(formData.minSallary);
 
-  function handleChange(e) {
-    const { name, value } = e.target;
 
-    setFormData((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
-  }
+const JobForm = ({ data, jobId }) => {
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+
+  const navigate = useNavigate()
+  const [countries, setCountries] = useState(Country.getAllCountries())
+  const [states, setStates] = useState([])
+  const [cities, setCities] = useState([])
+
+
+  const [selectedCountry, setSelectedCountry] = useState(data ? data.location.country : "")
+  const [selectedState, setSelectedState] = useState(data ? data.location.state : "")
+  const [selectedCity, setSelectedCity] = useState(data ? data.location.city : "")
+
+
+
+  const { register, control, handleSubmit, watch, formState: { errors } } = useForm({
+    resolver: zodResolver(jobPostSchema),
+    defaultValues: {
+      jobTitle: data ? data.title : "",
+      jobStatus: data ? data.status : "",
+      jobDescription: data ? data.description : "",
+      jobRequirements: data ? data.requirements : [],
+      jobExperience: data ? data.minExperience.toString() : "0",
+      country: selectedCountry,
+      state: selectedState,
+      city: selectedCity,
+      jobType: data ? data.jobType : "full-time",
+      workModel: data ? data.workModel : "office",
+      salaryRange: data ? [data.salaryRange.min, data.salaryRange.max] : [3, 10],
+    }
+  })
+  const selectedSalaryRange = watch("salaryRange");
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "jobRequirements"
+  })
+
+  useEffect(() => {
+    if (fields.length === 0) {
+      append("");
+    }
+  }, [fields, append]);
+
+  async function handlePostJob(data) {
+    const loading = toast.loading("Posting job")
     try {
       const response = await axiosInstance({
-        method: isCreate ? "POST" : "PUT",
-        url: isCreate ? "/job/one" : `/job/${jobId}`,
-        data: formData,
-      });
+        url: "/user/postAJob",
+        method: "POST",
+        data: data,
+      })
       if (response.status === 200) {
-        isCreate?toast.success("Job posted"):toast.success("Job updated")
-        navigate("/myJobPosts");
-        
+        toast.dismiss(loading)
+        toast.success("Job posted successfully")
+        navigate("/myJobPosts")
       }
     } catch (err) {
-      console.log("err in posting/updating job fe", err);
+      if (err.status === 409) {
+        toast.dismiss(loading)
+        toast.error("Same job already exists")
+      } else {
+        toast.dismiss(loading)
+        toast.error("Job posting failed")
+      }
+
+    }
+
+  }
+
+  async function handleUpdateJob(data) {
+
+    const loading = toast.loading("Updating job")
+    try {
+      const response = await axiosInstance({
+        url: `/user/myJobPosts/${jobId}`,
+        method: "PUT",
+        data: data
+      })
+      if (response.status === 200) {
+        toast.dismiss(loading)
+        toast.success("Job updated successfully")
+        navigate("/myJobPosts")
+      }
+    } catch (err) {
+      toast.dismiss(loading)
+      toast.error("Job updation failed")
     }
   }
 
-  return (
-    <div className="xl:w-2/3 lg:w-3/4 md:w-4/5 w-11/12 bg-brandColor dark:bg-darkColor-text  border border-black rounded-md">
-      <div className="text-center py-4 capitalize text-lg font-medium text-white dark:text-gray-950">
-        {isCreate?<div>Create new job post</div>:<div>Update job post - <span className="font-bold tracking-wider">{jobTitle}</span></div>}
-      </div>
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white dark:bg-darkColor flex flex-col gap-2 lg:gap-4 p-10 m-1 rounded-md relative pb-20"
-      >
-        {!isCreate && (
-          <div className="w-full   flex">
-            <label htmlFor="jobStatus" className="w-1/3 ">
-              Post status
-            </label>
+  useEffect(() => {
+    if (selectedCountry && selectedCountry.length > 0) {
+      const countryCode = getCountryCode(selectedCountry)
+      setStates(State.getStatesOfCountry(countryCode))
+    }
+  }, [selectedCountry])
 
-            <select
-              name="jobStatus"
-              id="jobStatus"
-              className="border"
-              required
-              value={formData.jobStatus}
-              onChange={handleChange}
+  useEffect(() => {
+    if (selectedCountry && selectedState && selectedCountry.length > 0 && selectedState.length > 0) {
+      const countryCode = getCountryCode(selectedCountry)
+      const stateCode = getStateCode(selectedState)
+      setCities(City.getCitiesOfState(countryCode, stateCode))
+    }
+
+  }, [selectedState, states])
+
+
+
+
+  function handleCountryChange(e) {
+    const country = countries.find(c => c.name === e.target.value)
+    setSelectedCountry(country.name)
+  }
+  function handleStateChange(e) {
+    const state = states.find(s => s.name === e.target.value)
+    setSelectedState(state.name)
+  }
+  function handleCityChange(e) {
+    const city = cities.find(c => c.name === e.target.value)
+    setSelectedCity(city.name)
+  }
+
+  const getCountryCode = (countryName) => {
+    const country = countries.find((c) => c.name.toLowerCase() === countryName.toLowerCase());
+    return country ? country.isoCode : null;
+  };
+  const getStateCode = (stateName) => {
+    const state = states.find((s) => s.name.toLowerCase() === stateName.toLowerCase());
+    return state ? state.isoCode : null;
+  };
+
+  return (
+    <form onSubmit={data ? handleSubmit(handleUpdateJob) : handleSubmit(handlePostJob)} className='max-w-80 mx-auto flex flex-col gap-4 text-sm tracking-wide'>
+      <div>
+        <label htmlFor="jobTitle" className="form-heading ">Job Title</label>
+        <input placeholder="Enter job title" title={data && "Cannot change job title"} type="text" disabled={data} id='jobTitle' {...register("jobTitle")} className={`input-style text-base ${data && "cursor-not-allowed"} ${errors?.jobTitle && "border-red-500"}`} />
+        {errors.jobTitle && <p className="err-msg">{errors.jobTitle.message}</p>}
+      </div>
+      {data && <div>
+        <label htmlFor='jobStatus' className='form-heading'>Job status</label><br />
+        <select {...register("jobStatus")} className='input-style w-24 cursor-pointer'>
+          <option value="open">Open</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>}
+      <div>
+        <label htmlFor="jobDescription" className="form-heading">Job Description</label>
+        <textarea placeholder="Provide a job description with at least 10 characters" rows={8} id='jobDescription' {...register("jobDescription")} className={`input-style font-para-font text-xs tracking-wider ${errors?.jobDescription && "border-red-500"}`} />
+        {errors.jobDescription && <p className="err-msg -mt-1">{errors.jobDescription.message}</p>}
+      </div>
+      <div>
+        <label htmlFor='jobRequirements-0' className="form-heading">Job Requirements</label>
+
+        {fields.map((field, index) => (
+          <div key={field.id}>  <div className="flex items-center space-x-2 mb-2">
+            <input
+              id={`jobRequirements-${index}`}
+              type="text"
+              {...register(`jobRequirements.${index}`)}
+              className={`input-style font-para-font text-xs tracking-wider ${errors?.jobRequirements?.[index] && "border-red-500"}`}
+              placeholder="Enter requirement"
+            />
+            {fields.length > 1 && <button
+              type="button"
+              onClick={() => remove(index)}
+              className="bg-red-500 hover:bg-red-600 text-white btn btn-sm p-1"
             >
-              <option value="Open">Open</option>
-              <option value="Closed">Closed</option>
+              <ClearIcon fontSize='small' />
+            </button>}
+          </div>
+            {
+              errors.jobRequirements?.[index] && (
+                <p className="err-msg -mt-2 mb-2">{errors.jobRequirements[index]?.message}</p>
+              )
+            }
+          </div>
+        ))}
+
+        <button
+          type="button"
+          onClick={() => append("")}
+          className="bg-green-500 mt-2 hover:bg-green-600 text-white btn btn-sm flex items-center justify-center gap-0 p-1 pr-2 font-normal text-xs tracking-wide"
+        >
+          <AddIcon fontSize='small' />Add Requirement
+        </button>
+      </div>
+      <div>
+        <label htmlFor="jobExperience" className="form-heading">Minimum Experience</label>
+        <input type="number" min={0} id='jobExperience' {...register("jobExperience")} className='input-style w-16 mx-2' defaultValue={0} /><span className='form-heading'>Years</span>
+        {errors.jobExperience && <p className="err-msg">{errors.jobExperience.message}</p>}
+      </div>
+      <div>
+        <p className="form-heading">Location</p>
+        <div className='flex flex-col mb-2'>
+          <div className='flex items-center gap-2'>Country:
+            <select id="country" {...register("country")} className={`input-style w-40 cursor-pointer ${errors?.country && "border-red-500"}`}
+              onChange={handleCountryChange}
+              value={selectedCountry ? selectedCountry : ""}
+            >
+              <option value="" className='hidden'>Select Country</option>
+              {countries.map(country => <option key={country.isoCode} value={country.name}>{country.name}</option>)}
             </select>
           </div>
-        )}
-
-        {isCreate && (
-          <div className="w-full   flex ">
-            <label htmlFor="jobTitle" className="w-1/3  ">
-              Job title
-            </label>
-            <input
-              type="text"
-              name="jobTitle"
-              id="jobTitle"
-              value={formData.jobTitle}
-              className="inputStyle w-2/3"
-              onChange={handleChange}
-              required
-            />
+          {errors.country && <p className="err-msg ">{errors.country.message}</p>}
+        </div>
+        <div className='flex flex-col mb-2'>
+          <div className='flex items-center gap-2'>State:
+            <select id="state" {...register("state")} className={`input-style w-40 cursor-pointer ${errors?.state && "border-red-500"}`}
+              onChange={handleStateChange}
+              value={selectedState ? selectedState : ""}
+            >
+              <option value="" className='hidden'>Select State</option>
+              {states.map(state => <option key={state.isoCode} value={state.name}>{state.name}</option>)}
+            </select>
           </div>
-        )}
+          {errors.state && <p className="err-msg">{errors.state.message}</p>}
+        </div>
+        <div className='flex flex-col mb-2'>
+          <div className='flex items-center gap-2'>City:
+            <select id="city" {...register("city")} className={`input-style w-40 cursor-pointer ${errors?.city && "border-red-500"}`}
+              onChange={handleCityChange}
+              value={selectedCity ? selectedCity : ""}
+            >
+              <option value="" className='hidden'>Select City</option>
+              {cities.map((city, index) => <option key={index} value={city.name}>{city.name}</option>)}
 
-        <div className="w-full   flex">
-          <label htmlFor="jobDescription" className="w-1/3 ">
-            Job description
-          </label>
-          <textarea
-            name="jobDescription"
-            id="jobDescription"
-            value={formData.jobDescription}
-            className="inputStyle w-2/3"
-            onChange={handleChange}
-            rows="4"
-            required
-          />
+            </select></div>
+          {errors.city && <p className="err-msg">{errors.city.message}</p>}
         </div>
-        <div className="w-full   flex">
-          <label htmlFor="jobRequirements" className="w-1/3 ">
-            Job requirements
-          </label>
-          <textarea
-            name="jobRequirements"
-            id="jobRequirements"
-            value={formData.jobRequirements}
-            className="inputStyle w-2/3"
-            onChange={handleChange}
-            rows="4"
-            required
-          />
+      </div>
+      <div>
+        <p className="form-heading">Job Type</p>
+        <div className='flex justify-evenly '>
+          <span className='flex items-center gap-1'><input type="radio" id="fullTime" {...register("jobType")} value="full-time" />
+            <label htmlFor="fullTime">Full Time</label></span>
+          <span className='flex items-center gap-1'><input type="radio" id="partTime" {...register("jobType")} value="part-time" />
+            <label htmlFor="partTime">Part Time</label></span>
+          <span className='flex items-center gap-1'> <input type="radio" id="internship" {...register("jobType")} value="internship" />
+            <label htmlFor="internship">Internship</label></span>
         </div>
-        <div className="w-full   flex">
-          <label htmlFor="jobExperience" className="w-1/3 ">
-            Minimum Experience
-          </label>
-          <input
-            type="number"
-            name="jobExperience"
-            id="jobExperience"
-            value={formData.jobExperience}
-            className="inputStyle w-20"
-            onChange={handleChange}
-            min={0}
-            required
-          />{" "}
-          <div className=" ml-1"> years</div>
+      </div>
+      <div>
+        <p className="form-heading">Work Model</p>
+        <div className='flex justify-evenly '>
+          <span className='flex items-center gap-1'><input type="radio" id="office" {...register("workModel")} value="office" />
+            <label htmlFor="office" >Office</label></span>
+          <span className='flex items-center gap-1'><input type="radio" id="remote" {...register("workModel")} value="remote" />
+            <label htmlFor="remote">Remote</label></span>
+          <span className='flex items-center gap-1'><input type="radio" id="hybrid" {...register("workModel")} value="hybrid" />
+            <label htmlFor="hybrid">Hybrid</label></span>
         </div>
-        <div className="w-full   flex">
-          <div className="w-1/3 ">Location</div>
-          <div className="w-2/3 flex flex-col gap-1 sm:pl-2">
-            <div className="flex">
-              <label htmlFor="locationCountry" className="sm:w-1/6 w-2/6  ">
-                Country
-              </label>
-              <input
-                type="text"
-                name="locationCountry"
-                id="locationCountry"
-                value={formData.locationCountry}
-                className="inputStyle w-2/3 sm:w-1/2"
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="flex">
-              <label htmlFor="locationState" className="sm:w-1/6 w-2/6 ">
-                State
-              </label>
-              <input
-                type="text"
-                name="locationState"
-                id="locationState"
-                value={formData.locationState}
-                className="inputStyle w-2/3 sm:w-1/2"
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="flex">
-              <label htmlFor="locationCity" className="sm:w-1/6 w-2/6 ">
-                City
-              </label>
-              <input
-                type="text"
-                name="locationCity"
-                id="locationCity"
-                value={formData.locationCity}
-                className="inputStyle w-2/3 sm:w-1/2"
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
-        </div>
-        <div className="w-full   flex">
-          <label htmlFor="jobType" className="w-1/3 ">
-            Job Type
-          </label>
+      </div>
+      <div className='flex flex-col'>
+        <label className="form-heading">Salary Range</label>
+        <p className='text-center'>{selectedSalaryRange ? `${selectedSalaryRange[0]} - ${selectedSalaryRange[1]}` : "Not Selected"} <span className='font-light'>LPA</span></p>
+        <div className='flex items-center gap-3 text-base'>
+          1 <Controller
+            name="salaryRange"
+            control={control}
 
-          <select
-            name="jobType"
-            id="jobType"
-            className="inputStyle"
-            required
-            value={formData.jobType}
-            onChange={handleChange}
-          >
-            <option value="Full-time">Full time</option>
-            <option value="Part-time">Part time</option>
-            <option value="Internship">Internship</option>
-          </select>
-        </div>
-        <div className="w-full   flex">
-          <label htmlFor="workModel" className="w-1/3 ">
-            Work Model
-          </label>
-
-          <select
-            name="workModel"
-            id="workModel"
-            className="inputStyle"
-            required
-            value={formData.workModel}
-            onChange={handleChange}
-          >
-            <option value="Office">Office</option>
-            <option value="Remote">Remote</option>
-            <option value="Hybrid">Hybrid</option>
-          </select>
-        </div>
-        <div className="w-full   flex">
-          <div className="w-1/3 ">Sallary <span className="font-light">(LPA)</span></div>
-          <div className="w-2/3  flex justify-start">
-            <div className="1/2 flex">
-              <label htmlFor="minSallary" className="w-2/6 text-end pr-1">
-                min{" "}
-              </label>
-              <input
-                type="number"
-                name="minSallary"
-                id="minSallary"
-                value={formData.minSallary}
-                className="inputStyle w-4/6"
-                onChange={handleChange}
-                required
+            render={({ field: { value, onChange } }) => (
+              <Range
+                step={1}
+                min={1}
+                max={99}
+                values={value}
+                onChange={onChange}
+                renderTrack={({ props, children }) => {
+                  const { key, ...restProps } = props;
+                  return (
+                    <div key={key} {...restProps} className="h-1 bg-brand-light rounded-full w-full relative">
+                      {children}
+                    </div>
+                  );
+                }}
+                renderThumb={({ props }) => {
+                  const { key, ...restProps } = props;
+                  return <div key={key} {...restProps} className="w-4 h-4 bg-brand-dark rounded-full cursor-pointer" />;
+                }}
               />
-            </div>
-            <div className="1/2 flex">
-              <label htmlFor="maxSallary" className="w-2/6 text-end pr-1">
-                max{" "}
-              </label>
-              <input
-                type="number"
-                name="maxSallary"
-                id="maxSallary"
-                value={formData.maxSallary}
-                className="inputStyle w-4/6"
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
+            )}
+          />99
         </div>
-        <div className="mt-4">
-          <input
-            type="submit"
-            value={isCreate ? "Post Job" : "Update Job Post"}
-            className={`btn  text-white  border p-4 text-sm font-medium py-2 absolute right-10 bottom-8 ${
-              isFormValid
-                ? "shadow-md shadow-black border-brandColor-dark  bg-brandColor-dark text-white hover:bg-brandColor hover:border-brandColor   active:shadow-none active:translate-y-1 transition-all duration-200 ease-in-out   "
-                : "bg-brandColor-light hover:shadow-none hover:border-brandColor-light border-brandColor-light hover:bg-brandColor-light cursor-not-allowed"
-            }`}
-            disabled={!isFormValid}
-          />
-        </div>
-      </form>
-    </div>
-  );
-};
+      </div>
 
-export default JobForm;
+      <div className='flex justify-center mt-4'>
+        <button className='btn hover:bg-green-600 bg-green-500 text-white text-base btn-wide'>{data ? "Update" : "Post"} Job</button>
+      </div>
+    </form>
+  )
+}
+
+export default JobForm

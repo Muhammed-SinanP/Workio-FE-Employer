@@ -1,5 +1,5 @@
 import React,{ useEffect }  from "react";
-import hiringImg from "../assets/hiringLens.png";
+const hiringImg = "/hiring.png";
 import { useNavigate } from "react-router-dom";
 import {stepsToUse} from "../components/Data"
 
@@ -11,56 +11,55 @@ const HomePage = () => {
   }, []);
 
   return (
-    <div className="outerDiv -mt-2 ">
+    <div className="-mt-2 ">
 
-      <div className="bg-homeColor dark:bg-homeColor-darkMode">
-        <div className="innerDiv  ">
-          <div className="flex flex-col-reverse sm:flex-row justify-start items-center py-10 ">
-            <div className="sm:w-1/2 w-full flex justify-end sm:justify-center px-6 sm:px-0">
+      <div className="bg-brand-light dark:bg-dark">
+        <div className="inner-div flex flex-col-reverse sm:flex-row justify-start items-center py-14">
+            <div className="sm:w-1/2 -mt-4 w-full flex justify-end sm:justify-center ">
               <img
                 src={hiringImg}
                 alt="hiring image"
-                className="h-44 sm:h-56 lg:h-80 object-contain  dark:mix-blend-luminosity"
+                className="h-80 object-contain  "
               />
             </div>
-            <div className="sm:w-1/3 w-full px-6 sm:px-0  flex flex-col gap-2">
-              <div className="text-xs md:text-sm font-semibold tracking-wider text-brandColor-dark dark:text-gray-950">
+            <div className="sm:w-1/2 lg:w-1/3 w-full   flex flex-col gap-2">
+              <div className="text-sm font-semibold tracking-wider text-brand-dark dark:text-brand-light">
                 WORKIO FOR EMPLOYERS
               </div>
-              <div className="text-2xl md:text-4xl  font-light leading-9 text-white italic">
-                Let's hire your next great candidate. Fast.
+              <div className="text-2xl md:text-4xl  font-light  text-white italic">
+                Let's hire your next great candidate. Fast!
               </div>
 
-              <div className="text-xs leading-4 tracking-wide text-black ">
+              <div className="text-sm font-para-font  tracking-wider text-brand-dark dark:text-brand-light ">
                 No matter the skills, experience or qualifications you're
                 looking for, you'll find the right people here.
               </div>
               <div>
                 <button
-                  onClick={() => navigate("/createNewJobPost")}
-                  className=" px-4 py-2 mt-2 rounded-md bg-brandColor-dark  text-white hover:bg-brandColor active:scale-95 transition-all duration-300 ease-in-out"
+                  onClick={() => navigate("/newJobPost")}
+                className="btn text-base tracking-wide bg-white dark:bg-dark-text dark:hover:bg-brand dark:active:bg-brand  text-brand-dark hover:bg-brand-dark hover:text-white active:bg-brand-dark active:text-white font-semibold border-none "
                 >
                   Post a job
                 </button>
               </div>
-            </div>
+            
           </div>
         </div>
       </div>
 
-      <div className="innerDiv p-2 py-4 pb-20">
-        <div className="text-center my-4 mb-10 text-xl font-bold tracking-wide text-brandColor-dark dark:text-darkColor-text px-2">
+      <div className="inner-div dark:bg-dark-text pb-20">
+        <div className="text-center my-4 mb-10 text-xl font-bold tracking-wide text-brand-dark  px-2">
           How to use Workio for employers?
         </div>
 
-        <div className="grid grid-cols-12 gap-4 px-10">
+        <div className="grid grid-cols-12 gap-4 px-10 lg:px-0">
           {stepsToUse.map((element, index) => (
-            <div key={index} className="sm:col-span-4 col-start-2 col-end-12  sm:p-4 p-2 pb-4 rounded-md flex flex-col gap-2 shadow-md shadow-gray-400 dark:shadow-darkColor-text dark:bg-darkColor bg-white">
-              <div className="font-semibold text-brandColor-dark dark:text-darkColor-text">
+            <div key={index} className="col-span-12 sm:col-span-6 lg:col-span-3 bg-white dark:bg-dark-input dark:text-dark-text border-0.5 border-brand dark:border-brand-light  rounded-lg p-6 flex flex-col gap-2">
+              <div className="font-semibold text-xl text-brand dark:text-brand-light">
                 {element.index}
               </div>
-              <div className="font-bold  text-lg">{element.title}</div>
-              <div className="font-light leading-5 text-sm">
+              <div className="font-bold text-brand dark:text-brand-light text-lg">{element.title}</div>
+              <div className="font-para-font text-sm">
                 {element.description}
               </div>
             </div>
@@ -68,17 +67,17 @@ const HomePage = () => {
         </div>
       </div>
       
-      <div className="bg-homeColor-light dark:bg-homeColor-darkModeLight">
-      <div className="innerDiv   p-2 py-4 pb-20">
-        <div className="text-center my-4 mb-10  text-xl font-bold tracking-wide text-brandColor-dark dark:text-gray-950">Why Workio?</div>
+      
+      <div className="inner-div bg-brand-light dark:bg-dark-light  pb-20">
+        <div className="text-center my-4 mb-10  text-xl font-bold tracking-wide text-brand-dark dark:text-dark-text">Why Workio?</div>
 
         <div className="sm:w-9/12 w-full px-10 flex flex-col gap-8 mt-10">
-            <div className="font-bold text-4xl tracking-wide text-brandColor dark:text-gray-900 text-center sm:text-start">Save time and effort in your recruitment journey.</div>
-            <div className=" text-xl font-light leading-6 text-center sm:text-start dark:text-gray-800">Finding the best fit for the job shouldn’t be a full-time job. Workio lets you post your needs. And helps you to find the best applicants.</div>
+            <div className="font-bold text-4xl tracking-wide text-brand-dark text-center sm:text-start">Save time and effort in your recruitment journey.</div>
+            <div className=" text-xl  font-light text-center sm:text-start text-brand-dark dark:text-dark-text">Finding the best fit for the job shouldn’t be a full-time job. Workio lets you post your needs. And helps you to find the best applicants.</div>
          </div>
       
       </div>
-      </div>
+      
 
 
      

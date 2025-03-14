@@ -1,7 +1,17 @@
 import PostAddIcon from "@mui/icons-material/PostAdd";
 import ArticleIcon from "@mui/icons-material/Article";
 import PersonIcon from '@mui/icons-material/Person';
-export const userOptions = [
+import HomeIcon from "@mui/icons-material/Home";
+
+export const navbarData = [
+  {
+  title: "Home",
+    path: "/",
+      icon: <HomeIcon fontSize="small" />,
+  },
+]
+
+export const userNavbarData = [
   {
     title: "Job Posts",
     path: "/myJobPosts",
@@ -9,7 +19,7 @@ export const userOptions = [
   },
   {
     title: "New Job",
-    path: "/createNewJobPost",
+    path: "/newJobPost",
     icon: <PostAddIcon fontSize="small" />,
   },
   {
@@ -27,14 +37,19 @@ export const stepsToUse = [
   },
   {
     index: 2,
-    title: "Build your job post",
-    description: "Then just add a title, description , location, etc., to your job post, and you're ready to go.",
+    title: "Post your job",
+    description: "Then just add a title, description , location, etc., to your job post, and post it.",
   },
   {
     index: 3,
-    title: "Post your job and relax",
-    description: "After you post your job, job seekers will apply for it which you can view in job posts - view application section.",
+    title: "Get verified",
+    description: "After you post your job, Workio team will verify the post and approve/reject your post accordingly.",
   },
+  {
+    index:4,
+    title:"Sit back and relax",
+    description:"Once your job post is approved, job seekers will apply for it which you can view in job posts - view application section."
+  }
 ];
 
 export const footerEmployerData=[

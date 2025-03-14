@@ -8,7 +8,7 @@ const ProtectedRoutes = ({ signIn }) => {
   if(initialized){
   
   if ( signIn && !userLoggedIn) {
-    return <Navigate to="/sign/login" replace />;
+    return <Navigate to="/auth/login" replace />;
   }
 
   if ( !signIn && userLoggedIn) {

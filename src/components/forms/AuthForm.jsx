@@ -1,192 +1,94 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../config/axiosInstance";
 import { useDispatch } from "react-redux";
 import { saveUserData } from "../../redux/features/userSlice";
-import googleIcon from "../../assets/googleIcon.png";
-import toast from "react-hot-toast"
+const googleIcon = "/googleIcon.png";
+import toast from "react-hot-toast";
+import LoginForm from "./LoginForm";
+import RegisterForm from "./RegisterForm";
 
-const  AuthForm = ({ isRegister,formData,setFormData }) => {
+const AuthForm = ({ isRegister }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
 
-  const isFormValid =
-    Object.values(formData).every((value) => value.trim() !== "") &&
-    (!isRegister || formData.userPassword === formData.userConfirmPassword);
-
-  function handleChange(e) {
-    const { name, value } = e.target;
-    setFormData((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
-  }
-  async function handleSubmit(e) {
-    e.preventDefault();
-    
+  async function submitAuthForm(data) {
     try {
       const response = await axiosInstance({
+        url: isRegister ? "/auth/register" : "/auth/login",
         method: "POST",
-        url: isRegister ? "/auth/register/employer" : "/auth/login/employer",
-        data: formData,
+        data: data,
       });
-      console.log(response);
       if (response.status === 200) {
         dispatch(saveUserData());
-        toast.success("SignIn success")
+        toast.success("Logged in successfully");
         navigate("/");
       }
     } catch (err) {
-      
-      if(err.status===409){
-        toast.error("User already exist.Please login")
-      }
-      else if(err.status==404){
-        toast.error("No such user exists.Please register")
-      }
-      else if(err.status===401){
-        toast.error("Incorrect password")
-      }
-      else{
+      if (err.status === 409) {
+        toast.error("User already exists. Please login");
+      } else if (err.status == 404) {
+        toast.error("No such user exists. Please register");
+      } else if (err.status === 401) {
+        toast.error("Incorrect password");
+      } else {
         console.error("Error during sign:", err.response?.data?.message || err);
       }
     }
   }
+
   function googleSignIn() {
     try {
-      
-
-      window.location.href = `${
-        import.meta.env.VITE_BACKEND_URL
-      }/api/auth/googleSign/employer`;
+      window.location.href = `${import.meta.env.VITE_BACKEND_URL
+        }/api/auth/googleSign/employer`;
     } catch (err) {
       console.log(err);
+      navigate("/");
     }
   }
+
   return (
-   
-        <div className="shadow-sm dark:shadow-darkColor-text px-10 pb-5 bg-white rounded-md dark:bg-darkColor">
-          <div className="text-center text-xl font-semibold mb-4 mt-2">
-            {isRegister ? "Register" : "Login"}
-          </div>
-          {isRegister ? (
-            <div className="text-xs text-center">
-              <span className="font-light">Already have an account? </span>
-              <NavLink
-                to="/sign/login"
-                className="text-blue-600 hover:underline"
-              >
-                Login
-              </NavLink>
-            </div>
-          ) : (
-            <div className="text-xs text-center">
-              <span className="font-light">New to Workio? </span>
-              <NavLink
-                to="/sign/register"
-                className="text-blue-600 hover:underline"
-              >
-                Register
-              </NavLink>
-            </div>
-          )}
-          <div className="w-full border-b my-4 "></div>
-          <button
-            onClick={googleSignIn}
-            className="flex border  border-brandColor rounded-md p-2 w-full items-center justify-center gap-2 text-brandColor hover:bg-brandColor hover:text-white active:scale-95 transition-all duration-300 ease-in-out"
-          >
-            <img src={googleIcon} alt="google icon" className="h-4" />
-            <span className="text-sm">Continue with Google</span>
-          </button>
-          <div className="flex w-full mt-4 justify-center items-center">
-            <div className="border-b w-full"></div>
-            <div className="px-2 text-xs text-gray-400">or</div>
-            <div className="border-b w-full"></div>
-          </div>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-1">
-            {isRegister && (
-              <div>
-                <label htmlFor="userName" className="text-sm text-brandColor">
-                  Your/Company name
-                </label>
-                <br />
-                <input
-                  type="text"
-                  id="userName"
-                  name="userName"
-                  value={formData.userName}
-                  placeholder="Jhon Doe"
-                  className="inputStyle"
-                  onChange={handleChange}
-                />
-              </div>
-            )}
-            <div>
-              <label htmlFor="userEmail" className="text-sm  text-brandColor">
-                Email
-              </label>
-              <br />
-              <input
-                type="email"
-                id="userEmail"
-                name="userEmail"
-                value={formData.userEmail}
-                placeholder="jhondoe@gmail.com"
-                className="inputStyle"
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="userPassword" className="text-sm  text-brandColor">
-                Password
-              </label>
-              <br />
-              <input
-                type="password"
-                id="userPassword"
-                name="userPassword"
-                value={formData.userPassword}
-                placeholder="****"
-                className="inputStyle"
-                onChange={handleChange}
-              />
-            </div>
-            {!isRegister&&<div className="text-end -mt-1.5"><span onClick={()=>navigate("/forgotPassword")} className="text-blue-500 hover:text-blue-700 text-xs cursor-pointer font-medium">forgot password ?</span></div>}
-            {isRegister && (
-              <div>
-                <label htmlFor="userConfirmPassword" className="text-sm  text-brandColor">
-                  Confirm password
-                </label>
-                <br />
-                <input
-                  type="password"
-                  id="userConfirmPassword"
-                  name="userConfirmPassword"
-                  value={formData.userConfirmPassword}
-                  placeholder="****"
-                  className="inputStyle"
-                  onChange={handleChange}
-                />
-              </div>
-            )}
-            <div>
-              <input
-                type="submit"
-                value={isRegister?"Register":"Login"}
-                className={`signBtn text-white pl-1 border w-full mt-2 text-sm font-medium py-1 ${
-                  isFormValid
-                    ? "bg-brandColor shadow-black shadow-sm active:shadow-none border-brandColor hover:shadow-sm hover:shadow-black"
-                    : "bg-brandColor-light hover:shadow-none hover:border-brandColor-light border-brandColor-light hover:bg-brandColor-light cursor-not-allowed"
-                }`}
-                disabled={!isFormValid}
-              />
-            </div>
-          </form>
-        </div>
-     
+    <div className="mx-auto w-80 rounded-lg bg-white px-6 py-4 tracking-wide shadow-md sm:mx-1 md:px-8 dark:bg-dark">
+      <div className="mb-4 text-center text-xl font-semibold sm:text-2xl dark:text-dark-text">
+        {isRegister ? "Register" : "Login"}
+      </div>
+
+      <div className="text-center text-sm font-medium dark:text-dark-text">
+        {isRegister ? "Already have an account?" : "New to Workio?"}
+        <span
+          onClick={() =>
+            navigate(`${isRegister ? "/auth/login" : "/auth/register"}`)
+          }
+          className="ml-1 cursor-pointer font-semibold tracking-wide text-blue-500 hover:underline"
+        >
+          {isRegister ? "Login" : "Register"}
+        </span>
+      </div>
+
+      <div className="border-borderColor my-3 mt-4 w-full border-b-0.5"></div>
+
+      <div className="flex w-full items-center justify-center text-center">
+        <button
+          onClick={googleSignIn}
+          className="btn btn-outline  btn-md my-1 flex w-full items-center justify-center gap-2 border-brand text-brand dark:text-brand-light hover:border-brand hover:bg-brand hover:text-white"
+        >
+          <img src={googleIcon} alt="google icon" className="h-4" />
+          <span className="text-base">Continue with Google</span>
+        </button>
+      </div>
+
+      <div className="my-2 mb-3 flex w-full items-center justify-center">
+        <div className="border-borderColor w-full border-b-0.5"></div>
+        <div className="px-2 text-xs text-gray-400">or</div>
+        <div className="border-borderColor w-full border-b-0.5"></div>
+      </div>
+
+      {isRegister ? (
+        <RegisterForm submitAuthForm={submitAuthForm} />
+      ) : (
+        <LoginForm submitAuthForm={submitAuthForm} />
+      )}
+    </div>
   );
 };
 

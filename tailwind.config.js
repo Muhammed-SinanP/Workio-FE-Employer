@@ -2,46 +2,47 @@ import { light } from '@mui/material/styles/createPalette'
 
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
       colors: {
-        brandColor: {
-          DEFAULT: "#00A264",
-          dark: "#004D2F",
-          light: "#76e3b9",
-          lighter: "#7efcce",
+        brand: {
+          DEFAULT: "#1E3A8A",
+          dark: "#041136",
+          light: "#7d9fff",
+          extralight: "#fafbfc",
+          text: "#202124",
         },
-        homeColor:{
-          DEFAULT:"#64D8FF",
-          light:"#dcf4fc",
-          darkMode:"#B1BBC9",
-          darkModeLight:"#bec7d4"
+        dark: {
+          DEFAULT: "#1D232A",
+          light: "#39424d",
+          text: "#A6ADBB",
+          input: "#121212",
         },
-        darkColor:{
-          DEFAULT:"#1D232A",
-          light:"#39424d",
-          text:"#A6ADBB",
-          input:"#121212"
-        }
+        "custom-border-color": {
+          DEFAULT: "#9CA3AF",
+        },
+        placeholder: {
+          DEFAULT: "#9CA3AF",
+        },
       },
       fontFamily: {
-        brandFont: ["Lora", "sans-serif"],
+        "brand-font": ["Lora", "sans-serif"],
+        "para-font": ["Noto Sans", "sans-serif"],
+      },
+      fontSize: {
+        xxs: "0.7rem",
       },
       borderWidth: {
         0.5: "0.5px",
+        3: "3px",
       },
     },
   },
-  plugins: [
-    require('daisyui'),
-  ],
+  plugins: [require("daisyui")],
   daisyui: {
     themes: ["light", "dark"],
   },
-  darkMode: ['selector', '[data-theme="dark"]'],
-}
+  darkMode: ["selector", '[data-theme="dark"]'],
+};
 

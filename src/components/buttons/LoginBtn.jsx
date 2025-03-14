@@ -1,13 +1,13 @@
 import React from "react";
-
 import PersonIcon from "@mui/icons-material/Person";
 import { useNavigate } from "react-router-dom";
+
 
 const LoginBtn = () => {
   const navigate = useNavigate()
   return (
-    <button onClick={()=>navigate("/sign/login")} className=" bg-brandColor  dark:bg-gray-100 dark:border-gray-100  text-xs font-medium signBtn">
-      <PersonIcon fontSize="small" className="p-1 pr-0"/> Login
+    <button onClick={() => navigate("/auth/login")} className=" bg-brand dark:hover:bg-brand-light dark:active:bg-brand-light sign-btn">
+      <PersonIcon fontSize="small" className="p-1"/> Login
     </button>
   );
 };

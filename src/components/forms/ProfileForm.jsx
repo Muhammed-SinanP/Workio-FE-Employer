@@ -1,133 +1,116 @@
 import React from "react";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import useFetch from "../../hooks/useFetch";
-import { useEffect } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import { axiosInstance } from "../../config/axiosInstance";
+import toast from "react-hot-toast";
+import {useForm} from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { profileSchema } from "../../schemas/userSchema";
 
 const ProfileForm = ({ userProfile }) => {
-  const [edit, setEdit] = useState("");
-  const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    userName: "N/A",
-    userEmail: "N/A",
-  });
-
-  useEffect(() => {
-    setFormData({
+  const [edit, setEdit] = useState(false);
+  
+  const {register,handleSubmit,formState:{errors},setFocus} = useForm({resolver:zodResolver(profileSchema),
+    defaultValues:{
       userName: userProfile?.profile.name || "N/A",
+      companyName: userProfile?.profile.company || "N/A",
       userEmail: userProfile?.profile.email || "N/A",
-    });
-  }, [userProfile]);
+    }
+  })
+  
 
-  function handleChange(e) {
-    const { name, value } = e.target;
-
-    setFormData((prev) => {
-      return {
-        ...prev,
-        [name]: value,
-      };
-    });
+  function handleEdit() {
+    setEdit(true);
+    setFocus("userName")
   }
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  async function handleProfileUpdate(data) {
+    
     try {
       const response = await axiosInstance({
         method: "PUT",
         url: "/user/myProfile",
-        data: formData,
+        data: data,
       });
 
       if (response.status === 200) {
-        console.log("update profile success");
-        setEdit("");
+        toast.success("Profile update success");
+        setEdit(false);
       }
     } catch (err) {
-      console.log("update profile failed", err);
+      toast.error("Profile updation failed")
     }
   }
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex flex-col gap-4 my-4 text-xs md:text-sm"
-    >
-      <div className="grid grid-cols-12 md:gap-2 gap-0">
-        <label
-          className="col-span-3   font-medium"
-          htmlFor="userName"
-        >
-          Name
-        </label>
-        <input
-          id="userName"
-          className={` dark:bg-darkColor col-span-6 inputStyle capitalize ${
-            edit === "name" ? "" : "border-none cursor-auto"
-          }`}
-          type="text"
-          name="userName"
-          onChange={handleChange}
-          value={formData.userName}
-          required
-          readOnly={edit === "name" ? false : true}
-        />
-        <div className="col-span-1">
-          <EditIcon
-            onClick={() => setEdit("name")}
-            fontSize="small"
-            className="cursor-pointer hover:text-brandColor"
+    <>
+      <form onSubmit={handleSubmit(handleProfileUpdate)} className="mb-2 flex flex-col gap-2 text-dark dark:text-dark-text">
+        <div className="flex flex-col">
+          <label className="font-medium" htmlFor="userName">
+           Your Name
+          </label>
+          <input
+            id="userName"
+            className={`input-style capitalize bg-transparent ${
+              edit ? "" : "cursor-auto border-none -mt-1.5"
+            }`}
+           {...register("userName")}
+            readOnly={edit ? false : true}
+          />
+          {errors.userName && <p className="err-msg">{errors.userName.message}</p>}
+        </div>
+        <div className="flex flex-col">
+          <label
+            className="font-medium "
+            htmlFor="companyName"
+          >
+            Company Name
+          </label>
+          <input
+            id="companyName"
+            className={`input-style bg-transparent ${edit ? "" : "cursor-auto border-none -mt-1.5"
+              }`}
+            {...register("companyName")}
+            readOnly={edit ? false : true}
           />
         </div>
-        {edit === "name" && (
-          <div className="col-span-2">
+        <div className="flex flex-col">
+          <label
+            className="font-medium"
+            htmlFor="userEmail"
+          >
+            Email
+          </label>
+          <input
+            id="userEmail"
+            className={`input-style bg-transparent  ${
+              edit ? "" : "cursor-auto border-none -mt-1.5"
+            }`}
+            {...register("userEmail")}
+            readOnly={edit ? false : true}
+          />
+          {errors.userEmail && <p className="err-msg">{errors.userEmail.message}</p>}
+        </div>
+        <div className="absolute right-4 top-4 font-semibold tracking-wide">
+          {edit ? (
             <input
               type="submit"
               value="Update"
-              className="cursor-pointer text-white hover:bg-brandColor-dark text-xs px-1.5 p-1 rounded-sm bg-brandColor active:scale-95"
+              className="btn btn-sm bg-green-500 hover:bg-green-600 text-white "
             />
-          </div>
-        )}
-      </div>
-      <div className="grid grid-cols-12 gap-2">
-        <label
-          className="col-span-3  font-medium"
-          htmlFor="userEmail"
-        >
-          Email
-        </label>
-        <input
-          id="userEmail"
-          className={` dark:bg-darkColor col-span-6  inputStyle ${
-            edit === "email" ? "" : "border-none cursor-auto"
-          }`}
-          type="email"
-          name="userEmail"
-          onChange={handleChange}
-          value={formData.userEmail}
-          required
-          readOnly={edit === "email" ? false : true}
-        />
-        <div className="col-span-1">
-          <EditIcon
-            onClick={() => setEdit("email")}
-            fontSize="small"
-            className="cursor-pointer hover:text-brandColor"
-          />
+          ) : (
+            <button
+                className="flex items-center text-xs md:text-sm text-blue-500"
+              onClick={handleEdit}
+            >
+              <EditIcon className="" fontSize="small" />
+              <span className="-mb-0.5 flex">
+                Edit<span className="ml-1 hidden sm:block">profile</span>
+              </span>
+            </button>
+          )}
         </div>
-        {edit === "email" && (
-          <div className="col-span-2">
-            <input
-              type="submit"
-              value="Update"
-              className="cursor-pointer text-white hover:bg-brandColor-dark text-xs px-1.5 p-1 rounded-sm bg-brandColor active:scale-95"
-            />
-          </div>
-        )}
-      </div>
-    </form>
+      </form>
+    </>
   );
 };
 
