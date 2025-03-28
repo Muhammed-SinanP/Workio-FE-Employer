@@ -89,7 +89,7 @@ const JobPostsPage = () => {
             ))
 
           }
-          {jobPostsCount === 0 && <div className="text-center dark:text-dark-text col-span-12">No job posts found. <span className="underline cursor-pointer text-brand dark:text-brand-light hover:text-brand-dark" onClick={() => navigate("/createNewJobPost")}>Post new job</span></div>
+          {jobPostsCount === 0 && <div className="text-center dark:text-dark-text col-span-12">No job posts found. <span className="underline cursor-pointer text-brand dark:text-brand-light hover:text-brand-dark" onClick={() => navigate("/newJobPost")}>Post new job</span></div>
           }
 
 
