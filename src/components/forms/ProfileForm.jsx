@@ -17,7 +17,6 @@ const ProfileForm = ({ userProfile }) => {
       userEmail: userProfile?.profile.email || "N/A",
     }
   })
-  
 
   function handleEdit() {
     setEdit(true);
@@ -25,25 +24,30 @@ const ProfileForm = ({ userProfile }) => {
   }
 
   async function handleProfileUpdate(data) {
-    
+    toast.dismiss()
+    const loading = toast.loading("Updating profile")
     try {
       const response = await axiosInstance({
         method: "PUT",
         url: "/user/myProfile",
         data: data,
       });
-
+         toast.dismiss(loading)
       if (response.status === 200) {
         toast.success("Profile update success");
         setEdit(false);
+      }else{
+        toast.error("Profile updation failed")
       }
     } catch (err) {
+      toast.dismiss(loading)
       toast.error("Profile updation failed")
     }
   }
+
   return (
     <>
-      <form onSubmit={handleSubmit(handleProfileUpdate)} className="mb-2 flex flex-col gap-2 text-dark dark:text-dark-text">
+      <form onSubmit={handleSubmit(handleProfileUpdate)} className="mb-2 flex text-sm flex-col gap-2 text-dark dark:text-dark-text">
         <div className="flex flex-col">
           <label className="font-medium" htmlFor="userName">
            Your Name

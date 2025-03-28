@@ -27,45 +27,38 @@ const JobPostCardSm = ({ job,refreshPage }) => {
     function handleDeleteJob(jobId, jobTitle) {
 
         async function deleteJob() {
+            toast.dismiss()
+            const loading = toast.loading(`Deleting ${jobTitle}`)
             try {
                 const response = await axiosInstance({
                     method: "DELETE",
                     url: `/user/myJobPosts/${jobId}`,
                 })
+                toast.dismiss(loading)
                 if (response.status === 200) {
                     refreshPage()
-                    toast.success("Job deleted successfully")
-                    
+                    toast.success("Job deleted successfully")    
+                }else{
+                    toast.error("Job deletion failed")
                 }
             } catch (err) {
-                console.log(err)
+                toast.dismiss(loading)
                 toast.error("Job deletion failed")
             }
         }
 
         confirm({
             title: "Confirm job deletion",
-            description: `Deleting ${jobTitle}, this can't be undone`,
+            description: `Deleting ${jobTitle}, this can't be undone.`,
             confirmationText: "Confirm"
         })
             .then(() => {
                 deleteJob()
-            })
-            .catch(() => {
-                toast('Deletion cancelled',{
-                    icon:'❗'
-                })
-
-            });
+            })          
     }
 
-
-
     return (
-        <div
-            className={`flex border-0.5 relative items-center text-center flex-col gap-2 p-4 rounded-md shadow-md  col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3  bg-white dark:bg-dark-input dark:text-dark-text`}
-
-        >
+        <div className={`flex border-0.5 relative items-center text-center flex-col gap-2 p-4 rounded-md shadow-md  col-span-12 sm:col-span-6 lg:col-span-4 xl:col-span-3  bg-white dark:bg-dark-input dark:text-dark-text`}>
             <div className="text-lg w-4/5 font-medium text-brand-dark dark:text-dark-text capitalize">
                 {job.title}
             </div>
@@ -106,10 +99,7 @@ const JobPostCardSm = ({ job,refreshPage }) => {
                 </div>
             </div>
 
-
             <DeleteForeverIcon onClick={()=>handleDeleteJob(job._id,job.title)} titleAccess='Delete job' fontSize='small' className='absolute top-2 right-2 text-red-500 cursor-pointer' />
-            {/* {!job.verified && <div className='bg-white dark:bg-dark-text dark:text-brand-text shadow-md p-1 px-1.5 text-xxs  tracking-wider absolute -top-3 left-3 rounded-md capitalize'>Verification: <span className='text-yellow-500 dark:text-yellow-200 font-medium'>Pending</span></div>
-            } */}
         </div>
     )
 }

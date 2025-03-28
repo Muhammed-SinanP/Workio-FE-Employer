@@ -3,15 +3,11 @@ const hiringImg = "/hiring.png";
 import { useNavigate } from "react-router-dom";
 import {stepsToUse} from "../components/Data"
 
-
 const HomePage = () => {
   const navigate = useNavigate();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   return (
-    <div className="-mt-2 ">
+    <div className="-mt-2 page-div pb-0">
 
       <div className="bg-brand-light dark:bg-dark">
         <div className="inner-div flex flex-col-reverse sm:flex-row justify-start items-center py-14">
@@ -27,17 +23,17 @@ const HomePage = () => {
                 WORKIO FOR EMPLOYERS
               </div>
               <div className="text-2xl md:text-4xl  font-light  text-white italic">
-                Let's hire your next great candidate. Fast!
+                Let's hire your next great candidate. Simpler and faster!
               </div>
 
               <div className="text-sm font-para-font  tracking-wider text-brand-dark dark:text-brand-light ">
                 No matter the skills, experience or qualifications you're
-                looking for, you'll find the right people here.
+                looking for, workio helps you to find the right people here.
               </div>
               <div>
                 <button
                   onClick={() => navigate("/newJobPost")}
-                className="btn text-base tracking-wide bg-white dark:bg-dark-text dark:hover:bg-brand dark:active:bg-brand  text-brand-dark hover:bg-brand-dark hover:text-white active:bg-brand-dark active:text-white font-semibold border-none "
+                className="btn text-base tracking-wide bg-white dark:bg-brand-extralight dark:hover:bg-brand dark:active:bg-brand  text-brand-dark hover:bg-brand-dark hover:text-white active:bg-brand-dark active:text-white font-semibold border-none "
                 >
                   Post a job
                 </button>

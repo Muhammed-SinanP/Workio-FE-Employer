@@ -9,10 +9,6 @@ const UpdateJobPostPage = () => {
     const params = useParams()
     const jobId = params.jobId
 
-useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
     const [data, error, isLoading] = useFetch(`/job/${jobId}`);
 
     if (error) {
@@ -25,8 +21,8 @@ useEffect(() => {
                 <h1 className='page-heading'>Update job post</h1>
                 <div>
                     {isLoading ?
-                        <LoadingDiv/> :
-                        <JobForm data={data} jobId={jobId}/>}
+                        <LoadingDiv /> :
+                        <JobForm data={data} jobId={jobId} />}
                 </div>
             </div>
         </div>

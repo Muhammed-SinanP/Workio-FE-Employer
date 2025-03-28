@@ -10,22 +10,17 @@ import { axiosInstance } from '../../config/axiosInstance';
 import toast from "react-hot-toast"
 import { useNavigate } from "react-router-dom";
 
-
-
 const JobForm = ({ data, jobId }) => {
-
-
   const navigate = useNavigate()
   const [countries, setCountries] = useState(Country.getAllCountries())
   const [states, setStates] = useState([])
   const [cities, setCities] = useState([])
 
-
   const [selectedCountry, setSelectedCountry] = useState(data ? data.location.country : "")
   const [selectedState, setSelectedState] = useState(data ? data.location.state : "")
   const [selectedCity, setSelectedCity] = useState(data ? data.location.city : "")
 
-
+  const [disableBtn,setDisableBtn] = useState(false)
 
   const { register, control, handleSubmit, watch, formState: { errors } } = useForm({
     resolver: zodResolver(jobPostSchema),
@@ -56,6 +51,8 @@ const JobForm = ({ data, jobId }) => {
   }, [fields, append]);
 
   async function handlePostJob(data) {
+    setDisableBtn(true)
+    toast.dismiss()
     const loading = toast.loading("Posting job")
     try {
       const response = await axiosInstance({
@@ -63,26 +60,28 @@ const JobForm = ({ data, jobId }) => {
         method: "POST",
         data: data,
       })
+      toast.dismiss(loading)
       if (response.status === 200) {
-        toast.dismiss(loading)
         toast.success("Job posted successfully")
         navigate("/myJobPosts")
-      }
-    } catch (err) {
-      if (err.status === 409) {
-        toast.dismiss(loading)
-        toast.error("Same job already exists")
-      } else {
-        toast.dismiss(loading)
+      }else{
         toast.error("Job posting failed")
       }
-
+    } catch (err) {
+      toast.dismiss(loading)
+      if (err.status === 409) {
+        toast.error("Same job already exists")
+      } else {
+        toast.error("Job posting failed")
+      }
+    }finally{
+      setDisableBtn(false)
     }
 
   }
 
   async function handleUpdateJob(data) {
-
+   toast.dismiss()
     const loading = toast.loading("Updating job")
     try {
       const response = await axiosInstance({
@@ -90,8 +89,8 @@ const JobForm = ({ data, jobId }) => {
         method: "PUT",
         data: data
       })
+      toast.dismiss(loading)
       if (response.status === 200) {
-        toast.dismiss(loading)
         toast.success("Job updated successfully")
         navigate("/myJobPosts")
       }
@@ -116,9 +115,6 @@ const JobForm = ({ data, jobId }) => {
     }
 
   }, [selectedState, states])
-
-
-
 
   function handleCountryChange(e) {
     const country = countries.find(c => c.name === e.target.value)
@@ -192,7 +188,7 @@ const JobForm = ({ data, jobId }) => {
         <button
           type="button"
           onClick={() => append("")}
-          className="bg-green-500 mt-2 hover:bg-green-600 text-white btn btn-sm flex items-center justify-center gap-0 p-1 pr-2 font-normal text-xs tracking-wide"
+          className="bg-brand hover:bg-brand-dark border-none mt-2  text-white btn btn-sm flex items-center justify-center gap-0 p-1 pr-2 font-normal text-xs tracking-wide"
         >
           <AddIcon fontSize='small' />Add Requirement
         </button>
@@ -297,7 +293,7 @@ const JobForm = ({ data, jobId }) => {
       </div>
 
       <div className='flex justify-center mt-4'>
-        <button className='btn hover:bg-green-600 bg-green-500 text-white text-base btn-wide'>{data ? "Update" : "Post"} Job</button>
+        <button type='submit' disabled={disableBtn} className='btn hover:bg-green-600 bg-green-500 text-white text-base btn-wide'>{data ? "Update" : "Post"} Job</button>
       </div>
     </form>
   )

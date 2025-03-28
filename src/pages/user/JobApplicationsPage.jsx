@@ -9,10 +9,6 @@ const JobApplicationsPage = () => {
   const jobId = params.jobId;
   const { jobTitle } = location.state;
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   return (
     <div className="page-div ">
       <div className="inner-div">

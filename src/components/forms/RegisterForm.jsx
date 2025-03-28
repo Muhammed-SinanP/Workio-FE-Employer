@@ -19,7 +19,7 @@ const RegisterForm = ({ submitAuthForm }) => {
     >
       <div className="flex flex-col gap-1">
         <label htmlFor="name" className="dark:text-dark-text">
-          Your full name
+          Your name
         </label>
         <input
           type="text"
@@ -47,6 +47,22 @@ const RegisterForm = ({ submitAuthForm }) => {
         />
         {errors.email && (
           <p className="text-xs text-red-500">{errors.email.message}</p>
+        )}
+      </div>
+
+      <div className="flex flex-col gap-1">
+        <label htmlFor="companyName" className="dark:text-dark-text">
+          Company name <span className="text-xs">(not compulsory)</span>
+        </label>
+        <input
+          type="text"
+          id="companyName"
+          {...register("companyName")}
+          placeholder="Lorem Ipsum Pvt. Ltd"
+          className={`${errors.name && "border-red-500"} input-style text-brand-dark dark:text-dark-text`}
+        />
+        {errors.name && (
+          <p className="text-xs text-red-500">{errors.name.message}</p>
         )}
       </div>
 
@@ -140,7 +156,7 @@ const RegisterForm = ({ submitAuthForm }) => {
         <input
           type="submit"
           value="Register"
-          className={`sign-btn-submit btn`}
+          className={`sign-btn-submit`}
         />
       </div>
     </form>

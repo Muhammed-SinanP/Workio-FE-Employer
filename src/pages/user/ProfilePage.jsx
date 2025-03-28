@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useFetch from "../../hooks/useFetch";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -18,23 +18,25 @@ const ProfilePage = () => {
   ]);
   const confirm = useConfirm();
   const navigate = useNavigate();
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   function handleDeleteAccount() {
+    toast.dismiss()
+    const loading = toast.loading("Deleting account")
     async function deleteAccount() {
       try {
         const response = await axiosInstance({
           method: "DELETE",
           url: "/user/deleteMyAccount",
         });
+        toast.dismiss(loading)
         if (response.status === 200) {
           toast.success("Account deleted successfully")
-          navigate("/");
-          
+          navigate("/");          
+        }else{
+          toast.error("Account deletion failed")
         }
       } catch (err) {
+        toast.dismiss(loading)
         toast.error("Account deletion failed")
       }
     }
@@ -46,9 +48,6 @@ const ProfilePage = () => {
       .then(() => {
         deleteAccount();
       })
-      .catch(() => {
-        console.log("Delete account cancel");
-      });
   }
   function handleLogout() {
     async function userLogout() {
@@ -70,14 +69,10 @@ const ProfilePage = () => {
       title: "Logout Confirmation",
       description: "Are you sure you want to do logout?",
       confirmationText: "Confirm",
-      cancellationText: "Cancel",
     })
       .then(() => {
         userLogout();
       })
-      .catch(() => {
-        console.log("logout cancelled");
-      });
   }
   return (
     <div className="page-div">

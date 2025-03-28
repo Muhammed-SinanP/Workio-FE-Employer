@@ -5,10 +5,11 @@ import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { passwordChangeSchema } from "../../schemas/authSchema";
+import { useState } from "react";
 
 const PasswordChangeForm = () => {
   const navigate = useNavigate();
-
+  const [disableBtn,setDisableBtn] = useState(false)
   const {
     handleSubmit,
     register,
@@ -16,23 +17,31 @@ const PasswordChangeForm = () => {
   } = useForm({ resolver: zodResolver(passwordChangeSchema) });
 
   async function changePassword(data) {
+    setDisableBtn(true)
+    toast.dismiss()
+    const loading = toast.loading("Updating password")
     try {
       const response = await axiosInstance({
         method: "POST",
         url: "/user/changeMyPassword",
         data: data,
       });
-
+      toast.dismiss(loading)
       if (response.status === 200) {
-        toast.success("Password Updated Successfully");
+        toast.success("Password updated successfully");
         navigate("/");
+      }else{
+        toast.error("Password updation failed")
       }
     } catch (err) {
+      toast.dismiss(loading)
       if (err.status === 401) {
-        toast.error("Incorrect password");
-      } else if (err.status == 400) {
+        toast.error("Incorrect old password");
+      } else if (err.status == 409) {
         toast.error("Current and new passwords can't be same");
       }
+    }finally{
+      setDisableBtn(false)
     }
   }
 
@@ -58,7 +67,7 @@ const PasswordChangeForm = () => {
       <div className="-mt-1.5 text-end">
         <span
           onClick={() => navigate("/forgotPassword")}
-          className="cursor-pointer text-sm font-medium text-blue-500 hover:text-blue-600"
+          className="forgot-password"
         >
           Forgot password?
         </span>
@@ -91,11 +100,11 @@ const PasswordChangeForm = () => {
           </p>
         )}
       </div>
-      <input
+      <button
         type="submit"
-        value="Update"
+        disabled={disableBtn}
         className="btn btn-wide border-none bg-brand text-base text-white hover:bg-brand-dark"
-      />
+      >Update</button>
     </form>
   );
 };

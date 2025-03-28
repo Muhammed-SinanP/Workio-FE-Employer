@@ -65,14 +65,14 @@ const LoginForm = ({ submitAuthForm }) => {
             <div className="-mt-2 text-end">
                 <span
                     onClick={() => navigate("/forgotPassword")}
-                    className="cursor-pointer text-sm font-medium text-blue-500 hover:text-blue-600 sm:text-xs"
+                    className="forgot-password"
                 >
                     forgot password?
                 </span>
             </div>
 
             <div className="mt-2.5">
-                <input type="submit" value="Login" className={`sign-btn-submit btn`} />
+                <input type="submit" value="Login" className={`sign-btn-submit`} />
             </div>
         </form>
     );

@@ -2,6 +2,7 @@ import React from 'react'
 import JobForm from '../../components/forms/JobForm'
 
 const NewJobPostPage = () => {
+ 
   return (
     <div className='page-div'>
       <div className='inner-div'>

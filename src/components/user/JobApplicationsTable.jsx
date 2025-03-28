@@ -3,6 +3,8 @@ import { useConfirm } from "material-ui-confirm"
 import useFetch from '../../hooks/useFetch';
 import { axiosInstance } from '../../config/axiosInstance';
 import LoadingDiv from '../LoadingDiv';
+import toast from "react-hot-toast"
+
 const JobApplicationsTable = ({ jobId }) => {
     const confirm = useConfirm();
     const [refresh, setRefresh] = useState(false);
@@ -10,7 +12,6 @@ const JobApplicationsTable = ({ jobId }) => {
         `user/jobApplications/${jobId}`,
         [refresh]
     );
-
 
     function handleStatus(jobId, applicantId, newStatus) {
         if (newStatus === "in-review") {
@@ -24,12 +25,11 @@ const JobApplicationsTable = ({ jobId }) => {
                 .then(() => {
                     changeStatus();
                 })
-                .catch(() => {
-                    console.log("update status cancelled");
-                });
         }
 
         async function changeStatus() {
+            toast.dismiss()
+            const loading = toast.loading("Updating status")
             try {
                 const response = await axiosInstance({
                     method: "PUT",
@@ -37,19 +37,19 @@ const JobApplicationsTable = ({ jobId }) => {
                     data: { applicantId, newStatus },
 
                 });
+                toast.dismiss(loading)
                 if (response.status === 200) {
-                    console.log("update status success");
+                    toast.success("Status updated successfully")
                     setRefresh(!refresh);
+                } else {
+                    toast.error("Status updation failed")
                 }
             } catch (err) {
-                console.log(err, "===status update err fe");
+                toast.dismiss(loading)
+                toast.error("Status updation failed")
             }
         }
     }
-
-
-
-
 
     return (
         <>
@@ -112,7 +112,9 @@ const JobApplicationsTable = ({ jobId }) => {
                         </tr>}
                 </tbody>
             </table> :
-                <LoadingDiv/>
+
+                <LoadingDiv />
+
             }
         </>
     )

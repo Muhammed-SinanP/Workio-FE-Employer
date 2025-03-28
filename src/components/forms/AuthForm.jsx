@@ -32,19 +32,13 @@ const AuthForm = ({ isRegister }) => {
       } else if (err.status === 401) {
         toast.error("Incorrect password");
       } else {
-        console.error("Error during sign:", err.response?.data?.message || err);
+        toast.error(isRegister?"Register failed":"Login failed")
       }
     }
   }
 
   function googleSignIn() {
-    try {
-      window.location.href = `${import.meta.env.VITE_BACKEND_URL
-        }/api/auth/googleSign/employer`;
-    } catch (err) {
-      console.log(err);
-      navigate("/");
-    }
+      window.location.href = `${import.meta.env.VITE_BACKEND_URL}/api/auth/googleSign/employer`; 
   }
 
   return (
@@ -65,7 +59,7 @@ const AuthForm = ({ isRegister }) => {
         </span>
       </div>
 
-      <div className="border-borderColor my-3 mt-4 w-full border-b-0.5"></div>
+      <div className="border-custom-border-color my-3 mt-4 w-full border-b-0.5"></div>
 
       <div className="flex w-full items-center justify-center text-center">
         <button
@@ -78,9 +72,9 @@ const AuthForm = ({ isRegister }) => {
       </div>
 
       <div className="my-2 mb-3 flex w-full items-center justify-center">
-        <div className="border-borderColor w-full border-b-0.5"></div>
+        <div className="border-custom-border-color w-full border-b-0.5"></div>
         <div className="px-2 text-xs text-gray-400">or</div>
-        <div className="border-borderColor w-full border-b-0.5"></div>
+        <div className="border-custom-border-color w-full border-b-0.5"></div>
       </div>
 
       {isRegister ? (

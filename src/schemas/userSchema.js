@@ -5,6 +5,6 @@ export const profileSchema = z.object({
   companyName: z.string(),
   userEmail: z
     .string()
-    .min(1, "Email is required.")
-    .email("Invalid email address."),
+    .min(1, "Email is required")
+    .email("Invalid email address"),
 });

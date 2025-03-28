@@ -6,8 +6,8 @@ import { useEffect } from 'react';
 import { useNavigate } from "react-router-dom";
 import JobPostCardSm from '../../components/cards/JobPostCardSm';
 import SkeletonJobPostCardSm from '../../components/skeletons/SkeletonJobPostCardSm';
-import { axiosInstance } from '../../config/axiosInstance';
 import InfoIcon from '@mui/icons-material/Info';
+import useFetch from '../../hooks/useFetch';
 
 const JobPostsPage = () => {
   const navigate = useNavigate()
@@ -17,13 +17,12 @@ const JobPostsPage = () => {
   const [jobPostsCount, setJobPostsCount] = useState(null)
   const [showBtn, setShowBtn] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [isLoading, setIsLoading] = useState(false)
+
   const { register, watch } = useForm()
   const jobTitle = watch("jobTitle");
 
   useEffect(() => {
     setInitialLoading(true)
-    window.scrollTo(0, 0);
   }, []);
 
 
@@ -36,7 +35,7 @@ const JobPostsPage = () => {
   }, [jobPosts, jobPostsCount])
 
   function handleLoadMore() {
-    !isLoading && jobPosts && setLimit(limit + 12);
+    !jobsLoading && jobPosts && setLimit(limit + 12);
   }
 
   function refreshPage() {
@@ -44,47 +43,25 @@ const JobPostsPage = () => {
   }
 
 
+  const [jobsData, jobsError, jobsLoading] = useFetch(`/user/myJobPosts?limit=${limit}&jobTitle=${jobTitle}`)
+
   useEffect(() => {
-    getJobPosts()
-    async function getJobPosts() {
-      try {
-
-        setIsLoading(true)
-        const response = await axiosInstance({
-          url: `/user/myJobPosts?limit=${limit}&jobTitle=${jobTitle ? jobTitle : ""}`
-        })
-        if (response.status == 200) {
-          setJobPosts(response?.data?.data?.jobPosts)
-          setJobPostsCount(response?.data?.data?.jobPostsCount)
-        }
-      } catch (err) {
-        console.log(err);
-      } finally {
-
-        setIsLoading(false)
-        setInitialLoading(false)
-      }
+    if (jobsData) {
+      setInitialLoading(false)
+      setJobPosts(jobsData.jobPosts)
+      setJobPostsCount(jobsData.jobPostsCount)
     }
-
-
-  }, [jobTitle, limit, refresh])
-
-
+  }, [jobsData])
 
   return (
     <div className='page-div relative'>
 
-
       <InfoIcon className='absolute peer right-5 text-dark-text top-5 cursor-pointer' />
 
-      <p className=' absolute hidden peer-hover:block z-10 max-w-80 text-center right-6 top-14 p-4 font-mono rounded-md shadow-md bg-gray-50 dark:bg-dark-text'>
-        Job posts will be verified by the team after you post/update it. Once it is approved, it will be visible to job seekers. And rejected job posts will be removed.<br />
+      <p className=' absolute hidden peer-hover:block z-10 max-w-80 text-center right-6 top-14 p-4 font-mono rounded-md shadow-md bg-white border-0.5 dark:bg-dark-text dark:text-dark-input'>
+        Job posts will be verified by the team after you post/update it. Once it is approved, it will be visible to job seekers. And job posts rejected by the team will be removed.<br />
         Only open jobs are shown to job seeker, so you can temporarily close the job by changing the status to closed.
       </p>
-
-
-
-
 
       <div className='inner-div '>
         <h1 className='page-heading'>All posted jobs</h1>
@@ -97,9 +74,9 @@ const JobPostsPage = () => {
           </form>
         </div>
 
-        <div className={`text-center ${isLoading && jobPosts ? "visible" : "invisible"}`}><span className='loading loading-dots loading-xl text-brand dark:text-brand-light'></span></div>
+        <div className={`text-center my-6 sm:mt-0 ${jobsLoading ? "visible" : "invisible"}`}><span className='loading loading-dots loading-xl text-brand dark:text-brand-light'></span></div>
 
-        <div className="grid grid-cols-12 gap-5 mt-6 px-6">
+        <div className="grid grid-cols-12 gap-5  px-6">
 
           {initialLoading || !jobPosts ?
             Array.from({ length: limit }, (_, index) => (
@@ -114,14 +91,7 @@ const JobPostsPage = () => {
           }
           {jobPostsCount === 0 && <div className="text-center dark:text-dark-text col-span-12">No job posts found. <span className="underline cursor-pointer text-brand dark:text-brand-light hover:text-brand-dark" onClick={() => navigate("/createNewJobPost")}>Post new job</span></div>
           }
-          {/* {jobPosts ?
-            jobPosts.length < 0 &&
-            jobPosts.map((element, index) => (
-              <JobPostCardSm key={index} job={element}/>
-            )) :
-            <div className="text-center col-span-12">No job posts found. <span className="underline cursor-pointer text-brand hover:text-brand-dark" onClick={() => navigate("/createNewJobPost")}>Post a job</span></div>
 
-          } */}
 
         </div>
 
@@ -133,7 +103,7 @@ const JobPostsPage = () => {
             onClick={handleLoadMore}
             className="btn btn-sm my-10 bg-brand tracking-wide text-white hover:bg-brand-dark active:bg-brand-dark"
           >
-            {isLoading ? "Loading ..." : "Load more"}
+            {jobsLoading ? "Loading ..." : "Load more"}
           </button>
         )}
       </div>

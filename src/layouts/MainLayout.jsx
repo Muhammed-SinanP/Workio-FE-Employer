@@ -9,7 +9,7 @@ import SignFooter from "../components/footer/SignFooter";
 import Footer from "../components/footer/Footer";
 const MainLayout = () => {
   const dispatch = useDispatch();
-  const { initialized, userLoggedIn } = useSelector((state) => state.user);
+  const { initialized } = useSelector((state) => state.user);
   const location = useLocation();
 
   async function checkUser() {
@@ -28,12 +28,11 @@ const MainLayout = () => {
     }
   }
 
- 
-  console.log(initialized);
-
   useEffect(() => {
-     checkUser();
+    checkUser();
+    window.scroll({ top: 0, behavior: "smooth" })
   }, [location.pathname]);
+
   useEffect(() => {
     const theme = localStorage.getItem("theme");
     document.documentElement.setAttribute("data-theme", theme);
@@ -42,7 +41,7 @@ const MainLayout = () => {
 
     initialized ?
       <div className="flex min-h-screen flex-col bg-brand-extralight dark:bg-dark-light">
-        
+
         {
           location.pathname == "/auth/login" ||
             location.pathname == "/auth/register" ? (

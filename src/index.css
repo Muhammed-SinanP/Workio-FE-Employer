@@ -43,7 +43,7 @@ body {
     @apply font-semibold text-gray-50 dark:text-gray-200;
   }
 .sign-btn-submit{
-  @apply  w-full border-none bg-brand text-base text-white hover:bg-brand-dark;
+  @apply btn w-full border-none bg-brand text-base text-white hover:bg-brand-dark;
 }
 .skeleton-custom-color {
     @apply skeleton bg-gray-300 dark:bg-dark-text;
@@ -58,6 +58,9 @@ body {
 
 .err-msg{
   @apply text-xs text-red-500 tracking-wide
+}
+.forgot-password{
+  @apply cursor-pointer text-sm font-medium text-blue-500 hover:text-blue-600 sm:text-xs
 }
 
 }
